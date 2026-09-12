@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isVideo() {
+      return request.resource.contentType.matches('video/.*');
+    }
+
+    // Property images: publicly readable, admin-only write.
+    match /properties/{propertyId}/images/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isImage() && request.resource.size < 15 * 1024 * 1024;
+    }
+
+    // Property videos: publicly readable, admin-only write.
+    match /properties/{propertyId}/videos/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isVideo() && request.resource.size < 200 * 1024 * 1024;
+    }
+
+    // Everything else is locked down by default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

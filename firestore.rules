@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Properties: public can read only published listings.
+    // Only authenticated admins can create, update, or delete.
+    match /properties/{propertyId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Inquiries: anyone can create (submit an inquiry).
+    // Only authenticated admins can read, update, or delete.
+    match /inquiries/{inquiryId} {
+      allow create: if request.resource.data.status == 'new'
+                    && request.resource.data.propertyId is string
+                    && request.resource.data.name is string
+                    && request.resource.data.phone is string;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}
