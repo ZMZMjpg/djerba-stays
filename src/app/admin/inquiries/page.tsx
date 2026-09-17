@@ -1,133 +1,71 @@
-"use client";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import PropertyGrid from "@/components/PropertyGrid";
+import Categories from "@/components/Categories";
+import WhyDjerbaStays from "@/components/WhyDjerbaStays";
+import ExploreDjerba from "@/components/ExploreDjerba";
+import SearchBar from "@/components/SearchBar";
+import Link from "next/link";
+import { getFeaturedProperties } from "@/lib/properties";
 
-import { useEffect, useState } from "react";
-import { getAllInquiries, setInquiryStatus } from "@/lib/admin-inquiries";
-import type { Inquiry, InquiryStatus } from "@/lib/types";
-import { buildWhatsAppLink } from "@/lib/whatsapp";
-import { MessageCircle } from "lucide-react";
+const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?q=80&w=2000&auto=format&fit=crop";
 
-const statusOptions: InquiryStatus[] = ["new", "read", "replied", "archived"];
-
-const statusStyles: Record<InquiryStatus, string> = {
-  new: "bg-sun/25 text-ink",
-  read: "bg-sea/20 text-djerba",
-  replied: "bg-djerba/10 text-djerba",
-  archived: "bg-black/5 text-ink/50",
-};
-
-export default function AdminInquiriesPage() {
-  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [openId, setOpenId] = useState<string | null>(null);
-
-  async function load() {
-    setLoading(true);
-    const data = await getAllInquiries();
-    setInquiries(data);
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    load();
-  }, []);
-
-  async function updateStatus(id: string, status: InquiryStatus) {
-    await setInquiryStatus(id, status);
-    load();
-  }
-
-  async function openInquiry(inquiry: Inquiry) {
-    setOpenId(openId === inquiry.id ? null : inquiry.id);
-    if (inquiry.status === "new") {
-      await updateStatus(inquiry.id, "read");
-    }
-  }
+export default async function HomePage() {
+  const featured = await getFeaturedProperties(6);
 
   return (
-    <div>
-      <h1 className="font-serif text-2xl text-ink">Messages</h1>
+    <>
+      <Header transparentAtTop />
+      <main>
+        <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(" + HERO_IMAGE_URL + ")" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-djerba-dark/70 via-djerba-dark/50 to-djerba-dark/80" />
 
-      <div className="mt-6 space-y-3">
-        {loading && <p className="text-sm text-ink/50">Loading inquiries...</p>}
-        {!loading && inquiries.length === 0 && (
-          <p className="text-sm text-ink/50">No inquiries yet.</p>
-        )}
+          <div className="container-page relative z-10 flex flex-col items-center pb-16 pt-32 text-center text-cream">
+            <p className="hand-annotation text-sun">summer starts here</p>
+            <h1 className="mt-4 max-w-3xl text-display-lg text-cream">Find your place in the sun.</h1>
+            <p className="mt-6 max-w-lg text-base text-cream/85">
+              Premium villas, houses, and traditional stays across Djerba — for families, couples, and long summer afternoons by the pool.
+            </p>
 
-        {inquiries.map((inquiry) => {
-          const isOpen = openId === inquiry.id;
-          const whatsappLink = buildWhatsAppLink({
-            propertyName: inquiry.propertyName,
-            checkIn: inquiry.checkIn,
-            checkOut: inquiry.checkOut,
-            guests: inquiry.guests,
-          });
-
-          return (
-            <div
-              key={inquiry.id}
-              className="overflow-hidden rounded-lg border border-black/10 bg-white"
-            >
-              <button
-                onClick={() => openInquiry(inquiry)}
-                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
-              >
-                <div>
-                  <p className="font-medium text-ink">{inquiry.name}</p>
-                  <p className="text-sm text-ink/60">{inquiry.propertyName}</p>
-                </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${statusStyles[inquiry.status]}`}
-                >
-                  {inquiry.status}
-                </span>
-              </button>
-
-              {isOpen && (
-                <div className="border-t border-black/5 px-5 py-4 text-sm">
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <p><span className="text-ink/50">Phone:</span> {inquiry.phone}</p>
-                    {inquiry.email && (
-                      <p><span className="text-ink/50">Email:</span> {inquiry.email}</p>
-                    )}
-                    <p><span className="text-ink/50">Check-in:</span> {inquiry.checkIn}</p>
-                    <p><span className="text-ink/50">Check-out:</span> {inquiry.checkOut}</p>
-                    <p><span className="text-ink/50">Guests:</span> {inquiry.guests}</p>
-                  </div>
-                  {inquiry.message && (
-                    <p className="mt-3 text-ink/80">{inquiry.message}</p>
-                  )}
-
-                  <div className="mt-4 flex flex-wrap items-center gap-4">
-                    
-                      href={whatsappLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 rounded-md border border-djerba/20 px-4 py-2 text-xs font-medium text-djerba hover:bg-djerba/5"
-                    >
-                      <MessageCircle size={14} />
-                      Reply on WhatsApp
-                    </a>
-
-                    <select
-                      value={inquiry.status}
-                      onChange={(e) =>
-                        updateStatus(inquiry.id, e.target.value as InquiryStatus)
-                      }
-                      className="rounded-md border border-black/15 px-3 py-2 text-xs"
-                    >
-                      {statusOptions.map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
+            <div className="mt-10 w-full max-w-4xl">
+              <SearchBar />
             </div>
-          );
-        })}
-      </div>
-    </div>
+          </div>
+        </section>
+
+        <Categories />
+
+        <section className="container-page py-4">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="hand-annotation">see you by the sea</p>
+              <h2 className="mt-2 text-display-sm text-ink">Featured stays</h2>
+            </div>
+            <Link href="/stays" className="hidden text-sm font-medium text-djerba underline-offset-4 hover:underline md:block">
+              View all stays
+            </Link>
+          </div>
+
+          <div className="mt-10 pb-16">
+            <PropertyGrid properties={featured} emptyMessage="Featured stays are coming soon." />
+          </div>
+        </section>
+
+        <WhyDjerbaStays />
+        <ExploreDjerba />
+
+        <section className="bg-djerba py-24 text-center text-cream">
+          <div className="container-page">
+            <p className="hand-annotation text-sun">somewhere in Djerba</p>
+            <h2 className="mt-3 text-display-sm">Long lunches. Warm nights. Somewhere in Djerba.</h2>
+            <Link href="/stays" className="mt-8 inline-block rounded-md bg-sun px-7 py-3.5 text-sm font-medium text-ink transition-colors duration-300 hover:bg-terracotta hover:text-cream">
+              Discover your stay
+            </Link>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 }

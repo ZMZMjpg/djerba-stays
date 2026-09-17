@@ -11,10 +11,7 @@ import type { Property, PropertyStatus } from "./types";
 
 const PROPERTIES_COLLECTION = "properties";
 
-export type NewPropertyInput = Omit
-  Property,
-  "id" | "createdAt" | "updatedAt"
->;
+export type NewPropertyInput = Omit<Property, "id" | "createdAt" | "updatedAt">;
 
 export async function createProperty(input: NewPropertyInput): Promise<string> {
   const ref = await addDoc(collection(db, PROPERTIES_COLLECTION), {

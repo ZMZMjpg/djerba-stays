@@ -10,7 +10,7 @@ export default function PropertyGrid({
 }) {
   if (properties.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-djerba/20 bg-sand/40 py-24 text-center">
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-ocean/30 bg-ocean/5 py-24 text-center">
         <p className="font-serif text-xl text-ink/70">{emptyMessage}</p>
         <p className="mt-2 text-sm text-ink/50">
           Try adjusting your filters or check back soon.

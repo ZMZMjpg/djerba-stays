@@ -4,6 +4,7 @@ import PropertyGrid from "@/components/PropertyGrid";
 import Categories from "@/components/Categories";
 import WhyDjerbaStays from "@/components/WhyDjerbaStays";
 import ExploreDjerba from "@/components/ExploreDjerba";
+import HeroSearchBar from "@/components/HeroSearchBar";
 import Link from "next/link";
 import { getFeaturedProperties } from "@/lib/properties";
 
@@ -12,24 +13,21 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header />
+      <Header transparentAtTop />
       <main>
-        <section className="relative flex min-h-[90vh] items-end bg-djerba">
-          <div className="container-page relative z-10 pb-24 pt-40 text-cream">
-            <p className="hand-annotation text-sun">summer starts here</p>
-            <h1 className="mt-4 max-w-3xl text-display-lg text-cream">
+        <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-djerba">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/hero.jpg" alt="Djerba coastline" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/35" />
+
+          <div className="container-page relative z-10 flex flex-col items-center pb-16 pt-32 text-center text-cream">
+            <h1 className="max-w-3xl text-display-lg text-cream" style={{ textShadow: "0 2px 24px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.5)" }}>
               Find your place in the sun.
             </h1>
-            <p className="mt-6 max-w-lg text-base text-cream/80">
-              Premium villas, houses, and traditional stays across Djerba —
-              for families, couples, and long summer afternoons by the pool.
-            </p>
-            <Link
-              href="/stays"
-              className="mt-8 inline-block rounded-md bg-sun px-7 py-3.5 text-sm font-medium text-ink transition-colors duration-300 hover:bg-terracotta hover:text-cream"
-            >
-              Discover stays
-            </Link>
+
+            <div className="mt-10 w-full drop-shadow-2xl">
+              <HeroSearchBar />
+            </div>
           </div>
         </section>
 
@@ -41,19 +39,13 @@ export default async function HomePage() {
               <p className="hand-annotation">see you by the sea</p>
               <h2 className="mt-2 text-display-sm text-ink">Featured stays</h2>
             </div>
-            <Link
-              href="/stays"
-              className="hidden text-sm font-medium text-djerba underline-offset-4 hover:underline md:block"
-            >
+            <Link href="/stays" className="hidden text-sm font-medium text-djerba underline-offset-4 hover:underline md:block">
               View all stays
             </Link>
           </div>
 
           <div className="mt-10 pb-16">
-            <PropertyGrid
-              properties={featured}
-              emptyMessage="Featured stays are coming soon."
-            />
+            <PropertyGrid properties={featured} emptyMessage="Featured stays are coming soon." />
           </div>
         </section>
 
@@ -63,13 +55,8 @@ export default async function HomePage() {
         <section className="bg-djerba py-24 text-center text-cream">
           <div className="container-page">
             <p className="hand-annotation text-sun">somewhere in Djerba</p>
-            <h2 className="mt-3 text-display-sm">
-              Long lunches. Warm nights. Somewhere in Djerba.
-            </h2>
-            <Link
-              href="/stays"
-              className="mt-8 inline-block rounded-md bg-sun px-7 py-3.5 text-sm font-medium text-ink transition-colors duration-300 hover:bg-terracotta hover:text-cream"
-            >
+            <h2 className="mt-3 text-display-sm">Long lunches. Warm nights. Somewhere in Djerba.</h2>
+            <Link href="/stays" className="mt-8 inline-block rounded-md bg-cream px-7 py-3.5 text-sm font-medium text-djerba transition-colors duration-300 hover:bg-sand">
               Discover your stay
             </Link>
           </div>

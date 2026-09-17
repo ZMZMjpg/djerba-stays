@@ -9,9 +9,7 @@ interface BaseProps {
   className?: string;
 }
 
-interface ButtonAsButton
-  extends BaseProps,
-    Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> {
+interface ButtonAsButton extends BaseProps, Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> {
   href?: undefined;
 }
 
@@ -22,12 +20,9 @@ interface ButtonAsLink extends BaseProps {
 type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const variantClasses: Record<Variant, string> = {
-  primary:
-    "bg-djerba text-cream hover:bg-djerba-dark",
-  secondary:
-    "bg-sun text-ink hover:bg-terracotta hover:text-cream",
-  outline:
-    "border border-djerba/30 text-djerba hover:border-djerba hover:bg-djerba/5",
+  primary: "bg-ocean text-cream hover:bg-ocean-dark",
+  secondary: "bg-djerba text-cream hover:bg-djerba-dark",
+  outline: "border border-ocean/30 text-ocean hover:border-ocean hover:bg-ocean/5",
 };
 
 const baseClasses =
@@ -35,7 +30,7 @@ const baseClasses =
 
 export default function Button(props: ButtonProps) {
   const { variant = "primary", children, className = "" } = props;
-  const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
+  const classes = baseClasses + " " + variantClasses[variant] + " " + className;
 
   if ("href" in props && props.href) {
     return (
@@ -45,8 +40,7 @@ export default function Button(props: ButtonProps) {
     );
   }
 
-  const { href: _href, variant: _v, children: _c, className: _cn, ...buttonProps } =
-    props as ButtonAsButton;
+  const { href: _href, variant: _v, children: _c, className: _cn, ...buttonProps } = props as ButtonAsButton;
 
   return (
     <button className={classes} {...buttonProps}>
