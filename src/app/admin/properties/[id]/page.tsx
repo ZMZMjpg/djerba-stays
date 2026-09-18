@@ -3,11 +3,12 @@ import { getPropertyById } from "@/lib/properties";
 import AdminPropertyForm from "@/components/AdminPropertyForm";
 
 interface EditPropertyPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function EditPropertyPage({ params }: EditPropertyPageProps) {
-  const property = await getPropertyById(params.id);
+  const { id } = await params;
+  const property = await getPropertyById(id);
 
   if (!property) {
     notFound();

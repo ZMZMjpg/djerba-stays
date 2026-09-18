@@ -20,7 +20,7 @@ export async function getPublishedProperties(): Promise<Property[]> {
     orderBy("createdAt", "desc")
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => d.data() as Property);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Property);
 }
 
 export async function getFeaturedProperties(count = 6): Promise<Property[]> {
@@ -32,7 +32,7 @@ export async function getFeaturedProperties(count = 6): Promise<Property[]> {
     fsLimit(count)
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => d.data() as Property);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Property);
 }
 
 export async function getPropertyBySlug(slug: string): Promise<Property | null> {
@@ -44,21 +44,19 @@ export async function getPropertyBySlug(slug: string): Promise<Property | null> 
   );
   const snapshot = await getDocs(q);
   if (snapshot.empty) return null;
-  return snapshot.docs[0].data() as Property;
+  const docSnap = snapshot.docs[0];
+  return { id: docSnap.id, ...docSnap.data() } as Property;
 }
 
 export async function getAllPropertiesForAdmin(): Promise<Property[]> {
-  const q = query(
-    collection(db, PROPERTIES_COLLECTION),
-    orderBy("createdAt", "desc")
-  );
+  const q = query(collection(db, PROPERTIES_COLLECTION), orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => d.data() as Property);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Property);
 }
 
 export async function getPropertyById(id: string): Promise<Property | null> {
   const ref = doc(db, PROPERTIES_COLLECTION, id);
   const snap = await getDoc(ref);
   if (!snap.exists()) return null;
-  return snap.data() as Property;
+  return { id: snap.id, ...snap.data() } as Property;
 }

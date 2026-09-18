@@ -10,11 +10,12 @@ import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { MessageCircle } from "lucide-react";
 
 interface PropertyPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: PropertyPageProps) {
-  const property = await getPropertyBySlug(params.slug);
+  const { slug } = await params;
+  const property = await getPropertyBySlug(slug);
   if (!property) return {};
 
   return {
@@ -29,7 +30,8 @@ export async function generateMetadata({ params }: PropertyPageProps) {
 }
 
 export default async function PropertyPage({ params }: PropertyPageProps) {
-  const property = await getPropertyBySlug(params.slug);
+  const { slug } = await params;
+  const property = await getPropertyBySlug(slug);
 
   if (!property) {
     notFound();
@@ -47,18 +49,12 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
           <h1 className="mt-1 text-display-sm text-ink">{property.name}</h1>
 
           <div className="mt-8">
-            <ImageGallery
-              images={[property.media.coverImage, ...property.media.images]}
-              propertyName={property.name}
-            />
+            <ImageGallery images={[property.media.coverImage, ...property.media.images]} propertyName={property.name} />
           </div>
 
           {hasVideo && (
             <div className="mt-6 max-w-2xl">
-              <VideoModal
-                videoUrl={property.media.videos[0]}
-                posterUrl={property.media.coverImage}
-              />
+              <VideoModal videoUrl={property.media.videos[0]} posterUrl={property.media.coverImage} />
             </div>
           )}
 
@@ -66,9 +62,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
             <div className="space-y-10 md:col-span-2">
               <div>
                 <h2 className="font-serif text-2xl text-ink">About this stay</h2>
-                <p className="mt-4 whitespace-pre-line text-base leading-relaxed text-ink/80">
-                  {property.description}
-                </p>
+                <p className="mt-4 whitespace-pre-line text-base leading-relaxed text-ink/80">{property.description}</p>
               </div>
 
               <Amenities amenities={property.amenities} />
@@ -77,20 +71,13 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
             <div className="space-y-4">
               <div className="rounded-lg border border-djerba/10 p-6">
                 <p className="text-lg font-medium text-ink">
-                  {property.price} TND{" "}
-                  <span className="text-sm font-normal text-ink/50">/ night</span>
+                  {property.price} TND <span className="text-sm font-normal text-ink/50">/ night</span>
                 </p>
                 <p className="mt-3 text-sm text-ink/60">
-                  {property.guests} guests · {property.bedrooms} bedrooms ·{" "}
-                  {property.bathrooms} bathrooms
+                  {property.guests} guests · {property.bedrooms} bedrooms · {property.bathrooms} bathrooms
                 </p>
 
-                
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 flex items-center justify-center gap-2 rounded-md border border-djerba/20 px-5 py-3 text-sm font-medium text-djerba transition-colors hover:bg-djerba/5"
-                >
+                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="mt-5 flex items-center justify-center gap-2 rounded-md border border-djerba/20 px-5 py-3 text-sm font-medium text-djerba transition-colors hover:bg-djerba/5">
                   <MessageCircle size={16} />
                   Contact on WhatsApp
                 </a>
