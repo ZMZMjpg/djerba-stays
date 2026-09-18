@@ -9,7 +9,7 @@ interface BaseProps {
   className?: string;
 }
 
-interface ButtonAsButton extends BaseProps, Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> {
+interface ButtonAsButton extends BaseProps, Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children"> {
   href?: undefined;
 }
 
