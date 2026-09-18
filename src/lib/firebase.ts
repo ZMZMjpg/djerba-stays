@@ -25,7 +25,6 @@ let firestoreInstance: Firestore;
 try {
   firestoreInstance = initializeFirestore(app, {
     experimentalAutoDetectLongPolling: true,
-    useFetchStreams: false,
   });
 } catch {
   firestoreInstance = getFirestore(app);
