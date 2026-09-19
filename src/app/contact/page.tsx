@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ContactForm from "@/components/ContactForm";
 import { MessageCircle, Mail, Phone } from "lucide-react";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 
@@ -20,21 +21,29 @@ export default function ContactPage() {
           <p className="hand-annotation">say hello</p>
           <h1 className="mt-2 text-display-sm text-ink">Get in touch</h1>
           <p className="mt-4 text-base text-ink/70">
-            Have a question about a property, or looking for something specific? Reach out directly and we&apos;ll get back to you.
+            Have a question about a property, or looking for something specific? Send us a message and we&apos;ll get back to you.
           </p>
 
-          <div className="mt-8 space-y-4">
+          <div className="mt-8">
+            <ContactForm />
+          </div>
+        </section>
+
+        <section className="container-page mt-16 max-w-xl border-t border-djerba/10 pt-10">
+          <p className="text-sm font-medium text-ink/60">Or reach us directly</p>
+
+          <div className="mt-4 space-y-4">
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className={linkClasses}>
               <MessageCircle size={18} className="text-djerba" />
-              Message us on WhatsApp
+              +216 29 253 725 — WhatsApp
             </a>
             <a href="mailto:hello@djerbastays.com" className={linkClasses}>
               <Mail size={18} className="text-djerba" />
               hello@djerbastays.com
             </a>
-            <a href="tel:+21600000000" className={linkClasses}>
+            <a href="tel:+21629253725" className={linkClasses}>
               <Phone size={18} className="text-djerba" />
-              +216 00 000 000
+              +216 29 253 725
             </a>
           </div>
         </section>

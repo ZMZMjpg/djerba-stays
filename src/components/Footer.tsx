@@ -24,7 +24,7 @@ export default function Footer() {
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-cream/50">Contact</p>
           <ul className="mt-4 space-y-3 text-sm">
-            <li className="flex items-center gap-2 text-cream/80"><Phone size={16} /> +216 00 000 000</li>
+            <li className="flex items-center gap-2 text-cream/80"><Phone size={16} /> +216 29 253 725</li>
             <li className="flex items-center gap-2 text-cream/80"><Mail size={16} /> hello@djerbastays.com</li>
             <li className="flex items-center gap-2 text-cream/80"><Instagram size={16} /> @djerbastays</li>
           </ul>
