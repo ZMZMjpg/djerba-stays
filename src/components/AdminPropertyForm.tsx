@@ -47,6 +47,7 @@ export default function AdminPropertyForm({ initialProperty }: AdminPropertyForm
   const [bathrooms, setBathrooms] = useState(initialProperty?.bathrooms?.toString() ?? "");
   const [propertyType, setPropertyType] = useState<PropertyType>(initialProperty?.propertyType ?? "villa");
   const [amenities, setAmenities] = useState<Amenity[]>(initialProperty?.amenities ?? []);
+  const [featured, setFeatured] = useState(initialProperty?.featured ?? false);
   const [coverImage, setCoverImage] = useState(initialProperty?.media.coverImage ?? "");
   const [images, setImages] = useState<string[]>(initialProperty?.media.images ?? []);
   const [videos, setVideos] = useState<string[]>(initialProperty?.media.videos ?? []);
@@ -125,7 +126,7 @@ export default function AdminPropertyForm({ initialProperty }: AdminPropertyForm
       propertyType,
       amenities,
       media: { coverImage, images, videos },
-      featured: initialProperty?.featured ?? false,
+      featured,
       status: initialProperty?.status ?? ("draft" as const),
     };
 
@@ -167,6 +168,11 @@ export default function AdminPropertyForm({ initialProperty }: AdminPropertyForm
 
         <input required value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder="Short description (used in listings & SEO)" className="mt-4 w-full rounded-md border border-black/15 px-4 py-2.5 text-sm" />
         <textarea required value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Full description" rows={5} className="mt-4 w-full rounded-md border border-black/15 px-4 py-2.5 text-sm" />
+
+        <label className="mt-4 flex items-center gap-2 text-sm text-ink/80">
+          <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+          Show in "Featured stays" on the homepage
+        </label>
       </div>
 
       <div className="rounded-lg border border-black/10 bg-white p-6">

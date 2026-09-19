@@ -58,3 +58,18 @@ export interface Inquiry {
   status: InquiryStatus;
   createdAt: number;
 }
+
+export interface HomepagePromoCard {
+  title: string;
+  description: string;
+  linkText: string;
+  linkHref: string;
+  image: string;
+}
+
+export interface HomepageSettings {
+  promoCards: HomepagePromoCard[];
+  bannerImages: string[];
+  bannerHeadline: string;
+  bannerSubtext: string;
+}

@@ -5,11 +5,14 @@ import Categories from "@/components/Categories";
 import WhyDjerbaStays from "@/components/WhyDjerbaStays";
 import ExploreDjerba from "@/components/ExploreDjerba";
 import HeroSearchBar from "@/components/HeroSearchBar";
+import PromoCards from "@/components/PromoCards";
+import PhotoBanner from "@/components/PhotoBanner";
 import Link from "next/link";
 import { getFeaturedProperties } from "@/lib/properties";
+import { getHomepageSettings } from "@/lib/homepage-settings";
 
 export default async function HomePage() {
-  const featured = await getFeaturedProperties(6);
+  const [featured, settings] = await Promise.all([getFeaturedProperties(6), getHomepageSettings()]);
 
   return (
     <>
@@ -31,6 +34,8 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <PromoCards cards={settings.promoCards} />
+
         <Categories />
 
         <section className="container-page py-4">
@@ -48,6 +53,8 @@ export default async function HomePage() {
             <PropertyGrid properties={featured} emptyMessage="Featured stays are coming soon." />
           </div>
         </section>
+
+        <PhotoBanner image={settings.bannerImage} headline={settings.bannerHeadline} subtext={settings.bannerSubtext} />
 
         <WhyDjerbaStays />
         <ExploreDjerba />

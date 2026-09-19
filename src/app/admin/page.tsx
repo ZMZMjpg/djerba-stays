@@ -1,80 +1,75 @@
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import PropertyGrid from "@/components/PropertyGrid";
+import Categories from "@/components/Categories";
+import WhyDjerbaStays from "@/components/WhyDjerbaStays";
+import ExploreDjerba from "@/components/ExploreDjerba";
+import HeroSearchBar from "@/components/HeroSearchBar";
+import PromoCards from "@/components/PromoCards";
+import PhotoBanner from "@/components/PhotoBanner";
 import Link from "next/link";
-import { getAllPropertiesForAdmin } from "@/lib/properties";
-import { getAllInquiries } from "@/lib/admin-inquiries";
+import { getFeaturedProperties } from "@/lib/properties";
+import { getHomepageSettings } from "@/lib/homepage-settings";
 
-export default async function AdminDashboardPage() {
-  const [properties, inquiries] = await Promise.all([
-    getAllPropertiesForAdmin(),
-    getAllInquiries(),
-  ]);
-
-  const published = properties.filter((p) => p.status === "published").length;
-  const drafts = properties.filter((p) => p.status === "draft").length;
-  const newInquiries = inquiries.filter((i) => i.status === "new").length;
-
-  const stats = [
-    { label: "Published properties", value: published },
-    { label: "Draft properties", value: drafts },
-    { label: "New inquiries", value: newInquiries },
-  ];
+export default async function HomePage() {
+  const [featured, settings] = await Promise.all([getFeaturedProperties(6), getHomepageSettings()]);
 
   return (
-    <div>
-      <h1 className="font-serif text-2xl text-ink">Dashboard</h1>
+    <>
+      <Header transparentAtTop />
+      <main>
+        <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-djerba">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/hero.jpg" alt="Djerba coastline" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/35" />
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-lg border border-black/10 bg-white p-6"
-          >
-            <p className="text-3xl font-semibold text-ink">{stat.value}</p>
-            <p className="mt-1 text-sm text-ink/60">{stat.label}</p>
+          <div className="container-page relative z-10 flex flex-col items-center pb-16 pt-32 text-center text-cream">
+            <h1 className="max-w-3xl text-display-lg text-cream" style={{ textShadow: "0 2px 24px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.5)" }}>
+              Find your place in the sun.
+            </h1>
+
+            <div className="mt-10 w-full drop-shadow-2xl">
+              <HeroSearchBar />
+            </div>
           </div>
-        ))}
-      </div>
+        </section>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-2">
-        <div className="rounded-lg border border-black/10 bg-white p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="font-medium text-ink">Recent inquiries</h2>
-            <Link href="/admin/inquiries" className="text-sm text-djerba hover:underline">
-              View all
+        <PromoCards cards={settings.promoCards} />
+
+        <Categories />
+
+        <section className="container-page py-4">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="hand-annotation">see you by the sea</p>
+              <h2 className="mt-2 text-display-sm text-ink">Featured stays</h2>
+            </div>
+            <Link href="/stays" className="hidden text-sm font-medium text-djerba underline-offset-4 hover:underline md:block">
+              View all stays
             </Link>
           </div>
-          <ul className="mt-4 space-y-3">
-            {inquiries.slice(0, 5).map((inquiry) => (
-              <li key={inquiry.id} className="text-sm">
-                <p className="font-medium text-ink">{inquiry.name}</p>
-                <p className="text-ink/60">{inquiry.propertyName}</p>
-              </li>
-            ))}
-            {inquiries.length === 0 && (
-              <p className="text-sm text-ink/50">No inquiries yet.</p>
-            )}
-          </ul>
-        </div>
 
-        <div className="rounded-lg border border-black/10 bg-white p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="font-medium text-ink">Recent properties</h2>
-            <Link href="/admin/properties" className="text-sm text-djerba hover:underline">
-              View all
+          <div className="mt-10 pb-16">
+            <PropertyGrid properties={featured} emptyMessage="Featured stays are coming soon." />
+          </div>
+        </section>
+
+        <PhotoBanner images={settings.bannerImages} headline={settings.bannerHeadline} subtext={settings.bannerSubtext} />
+
+        <WhyDjerbaStays />
+        <ExploreDjerba />
+
+        <section className="bg-djerba py-24 text-center text-cream">
+          <div className="container-page">
+            <p className="hand-annotation text-sun">somewhere in Djerba</p>
+            <h2 className="mt-3 text-display-sm">Long lunches. Warm nights. Somewhere in Djerba.</h2>
+            <Link href="/stays" className="mt-8 inline-block rounded-md bg-cream px-7 py-3.5 text-sm font-medium text-djerba transition-colors duration-300 hover:bg-sand">
+              Discover your stay
             </Link>
           </div>
-          <ul className="mt-4 space-y-3">
-            {properties.slice(0, 5).map((property) => (
-              <li key={property.id} className="flex items-center justify-between text-sm">
-                <span className="font-medium text-ink">{property.name}</span>
-                <span className="text-ink/50">{property.status}</span>
-              </li>
-            ))}
-            {properties.length === 0 && (
-              <p className="text-sm text-ink/50">No properties yet.</p>
-            )}
-          </ul>
-        </div>
-      </div>
-    </div>
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 }
