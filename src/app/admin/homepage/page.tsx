@@ -29,12 +29,34 @@ export default function AdminHomepagePage() {
     });
   }
 
+  function updateSpot(index: number, field: keyof HomepageSettings["exploreSpots"][number], value: string) {
+    setSettings((prev) => {
+      if (!prev) return prev;
+      const spots = [...prev.exploreSpots];
+      spots[index] = { ...spots[index], [field]: value };
+      return { ...prev, exploreSpots: spots };
+    });
+  }
+
   async function handleCardImageUpload(index: number, file: File) {
     const key = "card-" + index;
     setUploadingKey(key);
     try {
       const url = await uploadPropertyMedia("homepage", "images", file);
       updateCard(index, "image", url);
+    } catch {
+      alert("Upload failed. Please try again.");
+    } finally {
+      setUploadingKey(null);
+    }
+  }
+
+  async function handleSpotImageUpload(index: number, file: File) {
+    const key = "spot-" + index;
+    setUploadingKey(key);
+    try {
+      const url = await uploadPropertyMedia("homepage", "images", file);
+      updateSpot(index, "image", url);
     } catch {
       alert("Upload failed. Please try again.");
     } finally {
@@ -71,7 +93,7 @@ export default function AdminHomepagePage() {
   return (
     <div>
       <h1 className="font-serif text-2xl text-ink">Homepage</h1>
-      <p className="mt-1 text-sm text-ink/60">Edit the promo cards and photo slider shown on the public homepage.</p>
+      <p className="mt-1 text-sm text-ink/60">Edit the promo cards, photo slider, and Explore Djerba section shown on the public homepage.</p>
 
       <div className="mt-6 space-y-6">
         <div className="rounded-lg border border-black/10 bg-white p-6">
@@ -120,6 +142,26 @@ export default function AdminHomepagePage() {
           <div className="mt-4 space-y-3">
             <input value={settings.bannerHeadline} onChange={(e) => setSettings((prev) => (prev ? { ...prev, bannerHeadline: e.target.value } : prev))} placeholder="Headline" className="w-full max-w-md rounded-md border border-black/15 px-3 py-2 text-sm" />
             <input value={settings.bannerSubtext} onChange={(e) => setSettings((prev) => (prev ? { ...prev, bannerSubtext: e.target.value } : prev))} placeholder="Subtext" className="w-full max-w-md rounded-md border border-black/15 px-3 py-2 text-sm" />
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-black/10 bg-white p-6">
+          <h2 className="font-medium text-ink">Explore Djerba section</h2>
+          <div className="mt-4 grid gap-6 sm:grid-cols-3">
+            {settings.exploreSpots.map((spot, index) => (
+              <div key={index} className="space-y-2 rounded-md border border-black/10 p-4">
+                <div className="relative h-28 w-full overflow-hidden rounded-md bg-sand">
+                  <Image src={spot.image} alt={spot.title} fill sizes="200px" className="object-cover" />
+                </div>
+                <label className="flex w-fit cursor-pointer items-center gap-2 rounded-md border border-black/15 px-3 py-1.5 text-xs font-medium text-ink/70 hover:bg-sand">
+                  <Upload size={12} />
+                  {uploadingKey === "spot-" + index ? "Uploading..." : "Replace image"}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleSpotImageUpload(index, e.target.files[0])} />
+                </label>
+                <input value={spot.title} onChange={(e) => updateSpot(index, "title", e.target.value)} placeholder="Title" className="w-full rounded-md border border-black/15 px-3 py-2 text-sm" />
+                <textarea value={spot.description} onChange={(e) => updateSpot(index, "description", e.target.value)} placeholder="Description" rows={2} className="w-full rounded-md border border-black/15 px-3 py-2 text-sm" />
+              </div>
+            ))}
           </div>
         </div>
 

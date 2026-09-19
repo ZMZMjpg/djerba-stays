@@ -22,32 +22,43 @@ const defaultSettings: HomepageSettings = {
       title: "Near the beach",
       description: "Wake up minutes from the sand and a short walk to the sea.",
       linkText: "See beachside stays",
-      linkHref: "/stays",
+      linkHref: "/stays?beach=yes",
       image: "/photo2.jpg",
     },
   ],
   bannerImages: ["/photo2.jpg"],
   bannerHeadline: "Somewhere in Djerba",
   bannerSubtext: "A closer look at island life, one photo at a time.",
+  exploreSpots: [
+    { title: "Beaches", description: "From lively Sidi Mahres to quiet stretches near Aghir.", image: "/photo2.jpg" },
+    { title: "Food", description: "Grilled fish, ojja, and long lunches under the vines.", image: "/photo2.jpg" },
+    { title: "Houmt Souk & the old souks", description: "Whitewashed alleys, pottery, and the pace of island life.", image: "/photo2.jpg" },
+  ],
 };
 
 export async function getHomepageSettings(): Promise<HomepageSettings> {
-  const ref = doc(db, "settings", "homepage");
-  const snap = await getDoc(ref);
-  if (!snap.exists()) return defaultSettings;
-  const data = snap.data() as Partial<HomepageSettings> & { bannerImage?: string };
+  try {
+    const ref = doc(db, "settings", "homepage");
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return defaultSettings;
 
-  let bannerImages = data.bannerImages;
-  if (!bannerImages || bannerImages.length === 0) {
-    bannerImages = data.bannerImage ? [data.bannerImage] : defaultSettings.bannerImages;
+    const data = snap.data() as Partial<HomepageSettings> & { bannerImage?: string };
+
+    let bannerImages = data.bannerImages;
+    if (!Array.isArray(bannerImages) || bannerImages.length === 0) {
+      bannerImages = data.bannerImage ? [data.bannerImage] : defaultSettings.bannerImages;
+    }
+
+    return {
+      promoCards: Array.isArray(data.promoCards) && data.promoCards.length ? data.promoCards : defaultSettings.promoCards,
+      bannerImages,
+      bannerHeadline: data.bannerHeadline || defaultSettings.bannerHeadline,
+      bannerSubtext: data.bannerSubtext || defaultSettings.bannerSubtext,
+      exploreSpots: Array.isArray(data.exploreSpots) && data.exploreSpots.length ? data.exploreSpots : defaultSettings.exploreSpots,
+    };
+  } catch {
+    return defaultSettings;
   }
-
-  return {
-    promoCards: data.promoCards && data.promoCards.length ? data.promoCards : defaultSettings.promoCards,
-    bannerImages,
-    bannerHeadline: data.bannerHeadline || defaultSettings.bannerHeadline,
-    bannerSubtext: data.bannerSubtext || defaultSettings.bannerSubtext,
-  };
 }
 
 export async function updateHomepageSettings(settings: HomepageSettings): Promise<void> {

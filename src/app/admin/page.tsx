@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import PropertyGrid from "@/components/PropertyGrid";
 import Categories from "@/components/Categories";
 import WhyDjerbaStays from "@/components/WhyDjerbaStays";
 import ExploreDjerba from "@/components/ExploreDjerba";
@@ -8,11 +7,10 @@ import HeroSearchBar from "@/components/HeroSearchBar";
 import PromoCards from "@/components/PromoCards";
 import PhotoBanner from "@/components/PhotoBanner";
 import Link from "next/link";
-import { getFeaturedProperties } from "@/lib/properties";
 import { getHomepageSettings } from "@/lib/homepage-settings";
 
 export default async function HomePage() {
-  const [featured, settings] = await Promise.all([getFeaturedProperties(6), getHomepageSettings()]);
+  const settings = await getHomepageSettings();
 
   return (
     <>
@@ -37,22 +35,6 @@ export default async function HomePage() {
         <PromoCards cards={settings.promoCards} />
 
         <Categories />
-
-        <section className="container-page py-4">
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="hand-annotation">see you by the sea</p>
-              <h2 className="mt-2 text-display-sm text-ink">Featured stays</h2>
-            </div>
-            <Link href="/stays" className="hidden text-sm font-medium text-djerba underline-offset-4 hover:underline md:block">
-              View all stays
-            </Link>
-          </div>
-
-          <div className="mt-10 pb-16">
-            <PropertyGrid properties={featured} emptyMessage="Featured stays are coming soon." />
-          </div>
-        </section>
 
         <PhotoBanner images={settings.bannerImages} headline={settings.bannerHeadline} subtext={settings.bannerSubtext} />
 

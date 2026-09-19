@@ -67,9 +67,16 @@ export interface HomepagePromoCard {
   image: string;
 }
 
+export interface ExploreSpot {
+  title: string;
+  description: string;
+  image: string;
+}
+
 export interface HomepageSettings {
   promoCards: HomepagePromoCard[];
   bannerImages: string[];
   bannerHeadline: string;
   bannerSubtext: string;
+  exploreSpots: ExploreSpot[];
 }

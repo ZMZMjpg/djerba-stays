@@ -8,20 +8,21 @@ export default function PhotoBanner({
   headline,
   subtext,
 }: {
-  images: string[];
+  images: string[] | undefined;
   headline: string;
   subtext: string;
 }) {
+  const safeImages = images ?? [];
   const [index, setIndex] = useState(0);
-  const hasMultiple = images.length > 1;
+  const hasMultiple = safeImages.length > 1;
 
   const next = useCallback(() => {
-    setIndex((i) => (i + 1) % images.length);
-  }, [images.length]);
+    setIndex((i) => (i + 1) % safeImages.length);
+  }, [safeImages.length]);
 
   const prev = useCallback(() => {
-    setIndex((i) => (i - 1 + images.length) % images.length);
-  }, [images.length]);
+    setIndex((i) => (i - 1 + safeImages.length) % safeImages.length);
+  }, [safeImages.length]);
 
   useEffect(() => {
     if (!hasMultiple) return;
@@ -29,11 +30,11 @@ export default function PhotoBanner({
     return () => clearInterval(timer);
   }, [hasMultiple, next]);
 
-  if (images.length === 0) return null;
+  if (safeImages.length === 0) return null;
 
   return (
     <section className="relative flex h-[60vh] items-center justify-center overflow-hidden">
-      {images.map((src, i) => (
+      {safeImages.map((src, i) => (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           key={src + i}
@@ -61,7 +62,7 @@ export default function PhotoBanner({
           </button>
 
           <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-            {images.map((_, i) => (
+            {safeImages.map((_, i) => (
               <button
                 key={i}
                 type="button"

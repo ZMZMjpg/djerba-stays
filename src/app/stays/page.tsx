@@ -15,6 +15,7 @@ interface StaysPageProps {
     location?: string;
     bedrooms?: string;
     pool?: string;
+    beach?: string;
     checkIn?: string;
     lat?: string;
     lng?: string;
@@ -41,6 +42,9 @@ export default async function StaysPage({ searchParams }: StaysPageProps) {
       return false;
     }
     if (params.pool === "no" && property.amenities.includes("pool")) {
+      return false;
+    }
+    if (params.beach === "yes" && !property.amenities.includes("beach-nearby")) {
       return false;
     }
     if (lat !== null && lng !== null && radius !== null) {
