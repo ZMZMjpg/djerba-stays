@@ -1,17 +1,26 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { getCategoryById } from "@/lib/explore";
 import AdminExploreForm from "@/components/AdminExploreForm";
+import type { ExploreCategory } from "@/lib/types";
 
-interface EditCategoryPageProps {
-  params: Promise<{ id: string }>;
-}
+export default function EditExploreCategoryPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const [category, setCategory] = useState<ExploreCategory | null | undefined>(undefined);
 
-export default async function EditExploreCategoryPage({ params }: EditCategoryPageProps) {
-  const { id } = await params;
-  const category = await getCategoryById(id);
+  useEffect(() => {
+    getCategoryById(id).then(setCategory);
+  }, [id]);
 
-  if (!category) {
-    notFound();
+  if (category === undefined) {
+    return <p className="text-sm text-ink/50">Loading...</p>;
+  }
+
+  if (category === null) {
+    return <p className="text-sm text-terracotta">Category not found.</p>;
   }
 
   return (

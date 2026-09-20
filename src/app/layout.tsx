@@ -26,23 +26,21 @@ const hand = Caveat({
 export const metadata: Metadata = {
   metadataBase: new URL("https://djerbastays.com"),
   title: {
-    default: "Djerba Stays — Find your place in the sun",
+    default: "Djerba Stays - Find your place in the sun",
     template: "%s | Djerba Stays",
   },
-  description:
-    "Premium villas, houses and traditional stays in Djerba, Tunisia. Private pools, sea views, and warm summer evenings.",
+  description: "Premium villas, houses and traditional stays in Djerba, Tunisia.",
   openGraph: {
     title: "Djerba Stays",
-    description:
-      "Premium villas, houses and traditional stays in Djerba, Tunisia.",
+    description: "Premium villas, houses and traditional stays in Djerba, Tunisia.",
     url: "https://djerbastays.com",
     siteName: "Djerba Stays",
     locale: "en_US",
     type: "website",
   },
   icons: {
-  icon: "/logo.png",
-},
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -51,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${editorial.variable} ${sans.variable} ${hand.variable}`}>
+    <html lang="en" className={editorial.variable + " " + sans.variable + " " + hand.variable} suppressHydrationWarning>
       <body className="font-sans">{children}</body>
     </html>
   );

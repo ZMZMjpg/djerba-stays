@@ -1,83 +1,50 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
-import { getAllCategoriesForAdmin, deleteCategory } from "@/lib/explore";
-import type { ExploreCategory } from "@/lib/types";
+import Image from "next/image";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { getPublishedCategories } from "@/lib/explore";
 
-export default function AdminExplorePage() {
-  const [categories, setCategories] = useState<ExploreCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+export const metadata = {
+  title: "Explore Djerba",
+  description: "Transportation, food, cafes, and local character across the island of Djerba, Tunisia.",
+};
 
-  async function load() {
-    setLoading(true);
-    const data = await getAllCategoriesForAdmin();
-    setCategories(data);
-    setLoading(false);
-  }
+export const revalidate = 60;
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this category? This cannot be undone.")) return;
-    await deleteCategory(id);
-    load();
-  }
+export default async function ExplorePage() {
+  const categories = await getPublishedCategories();
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <h1 className="font-serif text-2xl text-ink">Explore Djerba</h1>
-        <Link href="/admin/explore/new" className="flex items-center gap-2 rounded-md bg-djerba px-4 py-2.5 text-sm font-medium text-cream hover:bg-djerba-dark">
-          <Plus size={16} />
-          Add category
-        </Link>
-      </div>
+    <>
+      <Header />
+      <main className="pt-32 pb-24">
+        <section className="container-page max-w-2xl">
+          <p className="hand-annotation">beyond the stay</p>
+          <h1 className="mt-2 text-display-sm text-ink">Explore Djerba</h1>
+          <p className="mt-4 text-base text-ink/70">
+            Djerba Stays is more than a place to sleep, here is a closer look at the island around you.
+          </p>
+        </section>
 
-      <div className="mt-6 overflow-hidden rounded-lg border border-black/10 bg-white">
-        {loading ? (
-          <p className="p-6 text-sm text-ink/50">Loading categories...</p>
-        ) : categories.length === 0 ? (
-          <p className="p-6 text-sm text-ink/50">No categories yet — add Transportation, Food, Cafés, or anything else.</p>
-        ) : (
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-black/10 text-ink/50">
-              <tr>
-                <th className="px-5 py-3 font-medium">Title</th>
-                <th className="px-5 py-3 font-medium">Order</th>
-                <th className="px-5 py-3 font-medium">Status</th>
-                <th className="px-5 py-3 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+        <section className="container-page mt-14">
+          {categories.length === 0 ? (
+            <p className="text-sm text-ink/50">More to come soon.</p>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-3">
               {categories.map((category) => (
-                <tr key={category.id} className="border-b border-black/5 last:border-0">
-                  <td className="px-5 py-3 font-medium text-ink">{category.title}</td>
-                  <td className="px-5 py-3 text-ink/70">{category.order}</td>
-                  <td className="px-5 py-3">
-                    <span className={"rounded-full px-2.5 py-1 text-xs font-medium " + (category.published ? "bg-sea/20 text-djerba" : "bg-black/5 text-ink/60")}>
-                      {category.published ? "published" : "draft"}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      <Link href={"/admin/explore/" + category.id} className="text-djerba hover:underline">
-                        Edit
-                      </Link>
-                      <button onClick={() => handleDelete(category.id)} className="text-terracotta hover:underline">
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                <Link key={category.id} href={"/explore/" + category.slug} className="group block">
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-sand">
+                    <Image src={category.coverImage} alt={category.title} fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover transition-transform duration-500 ease-smooth group-hover:scale-[1.04]" />
+                  </div>
+                  <h2 className="mt-4 font-serif text-lg text-ink transition-colors group-hover:text-ocean">{category.title}</h2>
+                  <p className="mt-1 text-sm text-ink/65">{category.summary}</p>
+                </Link>
               ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
+            </div>
+          )}
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 }

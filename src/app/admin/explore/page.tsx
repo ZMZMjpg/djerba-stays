@@ -41,7 +41,7 @@ export default function AdminExplorePage() {
         {loading ? (
           <p className="p-6 text-sm text-ink/50">Loading categories...</p>
         ) : categories.length === 0 ? (
-          <p className="p-6 text-sm text-ink/50">No categories yet — add Transportation, Food, Cafés, or anything else.</p>
+          <p className="p-6 text-sm text-ink/50">No categories yet.</p>
         ) : (
           <table className="w-full text-left text-sm">
             <thead className="border-b border-black/10 text-ink/50">
