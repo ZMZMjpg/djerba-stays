@@ -128,6 +128,7 @@ export default function AdminPropertyForm({ initialProperty }: AdminPropertyForm
       media: { coverImage, images, videos },
       featured,
       status: initialProperty?.status ?? ("draft" as const),
+      available: initialProperty?.available ?? true,
     };
 
     try {
