@@ -6,6 +6,10 @@ export const metadata = {
   description: "Beaches, food, and local character across the island of Djerba, Tunisia.",
 };
 
+function slugifyTitle(title: string): string {
+  return title.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 const spots = [
   {
     title: "Beaches",
@@ -44,7 +48,7 @@ export default function ExplorePage() {
 
         <section className="container-page mt-14 space-y-14">
           {spots.map((spot) => (
-            <div key={spot.title} className="max-w-2xl border-t border-djerba/10 pt-10 first:border-t-0 first:pt-0">
+            <div key={spot.title} id={slugifyTitle(spot.title)} className="max-w-2xl scroll-mt-28 border-t border-djerba/10 pt-10 first:border-t-0 first:pt-0">
               <h2 className="font-serif text-2xl text-ink">{spot.title}</h2>
               <p className="mt-3 text-base leading-relaxed text-ink/75">{spot.description}</p>
             </div>
