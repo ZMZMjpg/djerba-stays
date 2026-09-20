@@ -9,6 +9,8 @@ import PhotoBanner from "@/components/PhotoBanner";
 import Link from "next/link";
 import { getHomepageSettings } from "@/lib/homepage-settings";
 
+export const revalidate = 60;
+
 export default async function HomePage() {
   const settings = await getHomepageSettings();
 
