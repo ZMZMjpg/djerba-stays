@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { getAllInquiries, setInquiryStatus } from "@/lib/admin-inquiries";
 import type { Inquiry, InquiryStatus } from "@/lib/types";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Home } from "lucide-react";
 
 const statusOptions: InquiryStatus[] = ["new", "read", "replied", "archived"];
 
@@ -53,6 +54,7 @@ export default function AdminInquiriesPage() {
 
         {inquiries.map((inquiry) => {
           const isOpen = openId === inquiry.id;
+          const isGeneral = inquiry.propertyId === "general";
           const whatsappLink = buildWhatsAppLink({
             propertyName: inquiry.propertyName,
             checkIn: inquiry.checkIn,
@@ -71,19 +73,28 @@ export default function AdminInquiriesPage() {
               <button onClick={() => openInquiry(inquiry)} className={rowClasses}>
                 <div>
                   <p className="font-medium text-ink">{inquiry.name}</p>
-                  <p className="text-sm text-ink/60">{inquiry.propertyName}</p>
+                  <p className="mt-1 flex items-center gap-1.5 text-sm text-ocean">
+                    <Home size={13} />
+                    {isGeneral ? "General inquiry" : "Regarding: " + inquiry.propertyName}
+                  </p>
                 </div>
                 <span className={badgeClasses}>{inquiry.status}</span>
               </button>
 
               {isOpen && (
                 <div className="border-t border-black/5 px-5 py-4 text-sm">
+                  {!isGeneral && (
+                    <Link href={"/admin/properties/" + inquiry.propertyId} className="mb-3 inline-block text-xs font-medium text-djerba hover:underline">
+                      View / edit this property →
+                    </Link>
+                  )}
+
                   <div className="grid gap-2 sm:grid-cols-2">
                     <p><span className="text-ink/50">Phone: </span>{inquiry.phone}</p>
                     {inquiry.email && <p><span className="text-ink/50">Email: </span>{inquiry.email}</p>}
-                    <p><span className="text-ink/50">Check-in: </span>{inquiry.checkIn}</p>
-                    <p><span className="text-ink/50">Check-out: </span>{inquiry.checkOut}</p>
-                    <p><span className="text-ink/50">Guests: </span>{inquiry.guests}</p>
+                    {inquiry.checkIn && <p><span className="text-ink/50">Check-in: </span>{inquiry.checkIn}</p>}
+                    {inquiry.checkOut && <p><span className="text-ink/50">Check-out: </span>{inquiry.checkOut}</p>}
+                    {inquiry.guests > 0 && <p><span className="text-ink/50">Guests: </span>{inquiry.guests}</p>}
                   </div>
 
                   {inquiry.message && <p className="mt-3 text-ink/80">{inquiry.message}</p>}

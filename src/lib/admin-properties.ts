@@ -1,11 +1,4 @@
-import {
-  collection,
-  doc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { collection, doc, addDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
 import type { Property, PropertyStatus } from "./types";
 
@@ -22,10 +15,7 @@ export async function createProperty(input: NewPropertyInput): Promise<string> {
   return ref.id;
 }
 
-export async function updateProperty(
-  id: string,
-  input: Partial<NewPropertyInput>
-): Promise<void> {
+export async function updateProperty(id: string, input: Partial<NewPropertyInput>): Promise<void> {
   const ref = doc(db, PROPERTIES_COLLECTION, id);
   await updateDoc(ref, {
     ...input,
@@ -33,13 +23,18 @@ export async function updateProperty(
   });
 }
 
-export async function setPropertyStatus(
-  id: string,
-  status: PropertyStatus
-): Promise<void> {
+export async function setPropertyStatus(id: string, status: PropertyStatus): Promise<void> {
   const ref = doc(db, PROPERTIES_COLLECTION, id);
   await updateDoc(ref, {
     status,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function setPropertyAvailability(id: string, available: boolean): Promise<void> {
+  const ref = doc(db, PROPERTIES_COLLECTION, id);
+  await updateDoc(ref, {
+    available,
     updatedAt: serverTimestamp(),
   });
 }

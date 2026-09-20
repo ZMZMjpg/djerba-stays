@@ -13,14 +13,14 @@ import type { Property } from "./types";
 
 const PROPERTIES_COLLECTION = "properties";
 
+function isVisible(property: Property): boolean {
+  return property.available !== false;
+}
+
 export async function getPublishedProperties(): Promise<Property[]> {
-  const q = query(
-    collection(db, PROPERTIES_COLLECTION),
-    where("status", "==", "published"),
-    orderBy("createdAt", "desc")
-  );
+  const q = query(collection(db, PROPERTIES_COLLECTION), where("status", "==", "published"), orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Property);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Property).filter(isVisible);
 }
 
 export async function getFeaturedProperties(count = 6): Promise<Property[]> {
@@ -29,23 +29,22 @@ export async function getFeaturedProperties(count = 6): Promise<Property[]> {
     where("status", "==", "published"),
     where("featured", "==", true),
     orderBy("createdAt", "desc"),
-    fsLimit(count)
+    fsLimit(count + 5)
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Property);
+  return snapshot.docs
+    .map((d) => ({ id: d.id, ...d.data() }) as Property)
+    .filter(isVisible)
+    .slice(0, count);
 }
 
 export async function getPropertyBySlug(slug: string): Promise<Property | null> {
-  const q = query(
-    collection(db, PROPERTIES_COLLECTION),
-    where("slug", "==", slug),
-    where("status", "==", "published"),
-    fsLimit(1)
-  );
+  const q = query(collection(db, PROPERTIES_COLLECTION), where("slug", "==", slug), where("status", "==", "published"), fsLimit(1));
   const snapshot = await getDocs(q);
   if (snapshot.empty) return null;
   const docSnap = snapshot.docs[0];
-  return { id: docSnap.id, ...docSnap.data() } as Property;
+  const property = { id: docSnap.id, ...docSnap.data() } as Property;
+  return isVisible(property) ? property : null;
 }
 
 export async function getAllPropertiesForAdmin(): Promise<Property[]> {

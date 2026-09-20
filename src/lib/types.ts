@@ -38,6 +38,7 @@ export interface Property {
   media: PropertyMedia;
   featured: boolean;
   status: PropertyStatus;
+  available: boolean;
   createdAt: number;
   updatedAt: number;
 }
