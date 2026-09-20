@@ -1,9 +1,27 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAllPropertiesForAdmin } from "@/lib/properties";
 import { getAllInquiries } from "@/lib/admin-inquiries";
+import type { Property, Inquiry } from "@/lib/types";
 
-export default async function AdminDashboardPage() {
-  const [properties, inquiries] = await Promise.all([getAllPropertiesForAdmin(), getAllInquiries()]);
+export default function AdminDashboardPage() {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getAllPropertiesForAdmin(), getAllInquiries()]).then(([propertiesData, inquiriesData]) => {
+      setProperties(propertiesData);
+      setInquiries(inquiriesData);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return <p className="text-sm text-ink/50">Loading dashboard...</p>;
+  }
 
   const published = properties.filter((p) => p.status === "published").length;
   const drafts = properties.filter((p) => p.status === "draft").length;
