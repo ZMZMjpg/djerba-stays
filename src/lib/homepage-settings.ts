@@ -29,11 +29,6 @@ const defaultSettings: HomepageSettings = {
   bannerImages: ["/photo2.jpg"],
   bannerHeadline: "Somewhere in Djerba",
   bannerSubtext: "A closer look at island life, one photo at a time.",
-  exploreSpots: [
-    { title: "Beaches", description: "From lively Sidi Mahres to quiet stretches near Aghir.", image: "/photo2.jpg" },
-    { title: "Food", description: "Grilled fish, ojja, and long lunches under the vines.", image: "/photo2.jpg" },
-    { title: "Houmt Souk & the old souks", description: "Whitewashed alleys, pottery, and the pace of island life.", image: "/photo2.jpg" },
-  ],
 };
 
 export async function getHomepageSettings(): Promise<HomepageSettings> {
@@ -54,7 +49,6 @@ export async function getHomepageSettings(): Promise<HomepageSettings> {
       bannerImages,
       bannerHeadline: data.bannerHeadline || defaultSettings.bannerHeadline,
       bannerSubtext: data.bannerSubtext || defaultSettings.bannerSubtext,
-      exploreSpots: Array.isArray(data.exploreSpots) && data.exploreSpots.length ? data.exploreSpots : defaultSettings.exploreSpots,
     };
   } catch {
     return defaultSettings;
