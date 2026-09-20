@@ -1,61 +1,83 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+"use client";
 
-export const metadata = {
-  title: "Explore Djerba",
-  description: "Beaches, food, and local character across the island of Djerba, Tunisia.",
-};
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { getAllCategoriesForAdmin, deleteCategory } from "@/lib/explore";
+import type { ExploreCategory } from "@/lib/types";
 
-function slugifyTitle(title: string): string {
-  return title.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
+export default function AdminExplorePage() {
+  const [categories, setCategories] = useState<ExploreCategory[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const spots = [
-  {
-    title: "Beaches",
-    description:
-      "Djerba's coastline runs from the lively, resort-lined sands of Sidi Mahres in the northeast to quieter, wide-open stretches near Aghir and Sidi Jmour in the south. Mornings are calm and clear; by afternoon the water stays warm well into the evening.",
-  },
-  {
-    title: "Food",
-    description:
-      "Expect grilled fresh fish straight off the boat, ojja with merguez and egg, brik pastries, and long lazy lunches under vine-covered terraces. Houmt Souk's market stalls and small family-run restaurants are worth wandering into without a plan.",
-  },
-  {
-    title: "Houmt Souk & the old souks",
-    description:
-      "The island's main town mixes whitewashed alleyways, working pottery studios, and a genuine daily market rhythm rather than a purely touristic one. Early morning, before the heat sets in, is the best time to walk through.",
-  },
-  {
-    title: "Djerbian architecture",
-    description:
-      "Traditional Djerbian houses (menzels) are built low, thick-walled, and whitewashed, designed around courtyards to stay cool through the summer — a strong reference point for the island's calm, understated visual identity.",
-  },
-];
+  async function load() {
+    setLoading(true);
+    const data = await getAllCategoriesForAdmin();
+    setCategories(data);
+    setLoading(false);
+  }
 
-export default function ExplorePage() {
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this category? This cannot be undone.")) return;
+    await deleteCategory(id);
+    load();
+  }
+
   return (
-    <>
-      <Header />
-      <main className="pt-32 pb-24">
-        <section className="container-page max-w-2xl">
-          <p className="hand-annotation">beyond the stay</p>
-          <h1 className="mt-2 text-display-sm text-ink">Explore Djerba</h1>
-          <p className="mt-4 text-base text-ink/70">
-            Djerba Stays is more than a place to sleep — here&apos;s a closer look at the island around you.
-          </p>
-        </section>
+    <div>
+      <div className="flex items-center justify-between">
+        <h1 className="font-serif text-2xl text-ink">Explore Djerba</h1>
+        <Link href="/admin/explore/new" className="flex items-center gap-2 rounded-md bg-djerba px-4 py-2.5 text-sm font-medium text-cream hover:bg-djerba-dark">
+          <Plus size={16} />
+          Add category
+        </Link>
+      </div>
 
-        <section className="container-page mt-14 space-y-14">
-          {spots.map((spot) => (
-            <div key={spot.title} id={slugifyTitle(spot.title)} className="max-w-2xl scroll-mt-28 border-t border-djerba/10 pt-10 first:border-t-0 first:pt-0">
-              <h2 className="font-serif text-2xl text-ink">{spot.title}</h2>
-              <p className="mt-3 text-base leading-relaxed text-ink/75">{spot.description}</p>
-            </div>
-          ))}
-        </section>
-      </main>
-      <Footer />
-    </>
+      <div className="mt-6 overflow-hidden rounded-lg border border-black/10 bg-white">
+        {loading ? (
+          <p className="p-6 text-sm text-ink/50">Loading categories...</p>
+        ) : categories.length === 0 ? (
+          <p className="p-6 text-sm text-ink/50">No categories yet — add Transportation, Food, Cafés, or anything else.</p>
+        ) : (
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-black/10 text-ink/50">
+              <tr>
+                <th className="px-5 py-3 font-medium">Title</th>
+                <th className="px-5 py-3 font-medium">Order</th>
+                <th className="px-5 py-3 font-medium">Status</th>
+                <th className="px-5 py-3 font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map((category) => (
+                <tr key={category.id} className="border-b border-black/5 last:border-0">
+                  <td className="px-5 py-3 font-medium text-ink">{category.title}</td>
+                  <td className="px-5 py-3 text-ink/70">{category.order}</td>
+                  <td className="px-5 py-3">
+                    <span className={"rounded-full px-2.5 py-1 text-xs font-medium " + (category.published ? "bg-sea/20 text-djerba" : "bg-black/5 text-ink/60")}>
+                      {category.published ? "published" : "draft"}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3">
+                    <div className="flex items-center gap-3">
+                      <Link href={"/admin/explore/" + category.id} className="text-djerba hover:underline">
+                        Edit
+                      </Link>
+                      <button onClick={() => handleDelete(category.id)} className="text-terracotta hover:underline">
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
   );
 }

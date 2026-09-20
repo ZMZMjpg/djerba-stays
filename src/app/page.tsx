@@ -2,7 +2,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Categories from "@/components/Categories";
 import WhyDjerbaStays from "@/components/WhyDjerbaStays";
-import ExploreDjerba from "@/components/ExploreDjerba";
 import HeroSearchBar from "@/components/HeroSearchBar";
 import PromoCards from "@/components/PromoCards";
 import PhotoBanner from "@/components/PhotoBanner";
@@ -41,7 +40,6 @@ export default async function HomePage() {
         <PhotoBanner images={settings.bannerImages} headline={settings.bannerHeadline} subtext={settings.bannerSubtext} />
 
         <WhyDjerbaStays />
-        <ExploreDjerba spots={settings.exploreSpots} />
 
         <section className="bg-djerba py-24 text-center text-cream">
           <div className="container-page">

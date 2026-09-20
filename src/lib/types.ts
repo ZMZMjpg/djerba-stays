@@ -68,16 +68,23 @@ export interface HomepagePromoCard {
   image: string;
 }
 
-export interface ExploreSpot {
-  title: string;
-  description: string;
-  image: string;
-}
-
 export interface HomepageSettings {
   promoCards: HomepagePromoCard[];
   bannerImages: string[];
   bannerHeadline: string;
   bannerSubtext: string;
-  exploreSpots: ExploreSpot[];
+}
+
+export interface ExploreCategory {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  coverImage: string;
+  gallery: string[];
+  order: number;
+  published: boolean;
+  createdAt: number;
+  updatedAt: number;
 }
