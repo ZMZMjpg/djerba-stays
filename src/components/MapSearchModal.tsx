@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { X, LocateFixed } from "lucide-react";
@@ -13,6 +14,15 @@ export default function MapSearchModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   const [center, setCenter] = useState<[number, number]>(DJERBA_CENTER);
   const [radiusKm, setRadiusKm] = useState(10);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   const handlePick = useCallback((lat: number, lng: number) => {
     setCenter([lat, lng]);
@@ -30,12 +40,14 @@ export default function MapSearchModal({ onClose }: { onClose: () => void }) {
     params.set("lat", center[0].toString());
     params.set("lng", center[1].toString());
     params.set("radius", radiusKm.toString());
-    router.push(`/stays?${params.toString()}`);
+    router.push("/stays?" + params.toString());
     onClose();
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="flex max-h-[85vh] w-[92vw] max-w-2xl flex-col overflow-hidden rounded-lg bg-cream shadow-elevated">
         <div className="flex items-center justify-between border-b border-djerba/10 px-5 py-4">
           <p className="font-serif text-lg text-ink">Search on map</p>
@@ -76,6 +88,7 @@ export default function MapSearchModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
